@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+const API_KEY = 'apikey';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -12,7 +14,7 @@ export class OcrSpaceService {
   getParsedText(base64): Observable<any> {
     const url = 'https://api.ocr.space/parse/image';
     let headers = new HttpHeaders();
-    headers = headers.append('apikey', 'apikey');
+    headers = headers.append('apikey', API_KEY);
     let body = new FormData();
     body.append('language', 'eng');
     body.append('isOverlayRequired', 'false');
