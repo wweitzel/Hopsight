@@ -32,8 +32,11 @@ export class HomePage {
 
   async imageSelected(event) {
     await this.presentLoading('Parsing image...');
+    this.doneParsing = false;
+    this.beersWithRanks = [];
     await this.handleImage(event).finally(async () => {
       await this.dismissLoading();
+      this.doneParsing = true;
     });
   }
 
@@ -46,7 +49,6 @@ export class HomePage {
 
   private async handleImage(event) {
     this.selectedBeers = [];
-    this.doneParsing = false;
     const file = event.target.files[0];
     
     const compressedImage = await this.compressImage(file);
@@ -55,25 +57,30 @@ export class HomePage {
 
     const imageText = ocrResp.ParsedResults[0].ParsedText;
     this.strippedTextArray = this.beerDetectService.getBeerSerchTerms(imageText);
-    this.doneParsing = true;
   }
 
   private async rankBeers(beers: string[]) {
-    let beerIds = [];
-    let promises: Promise<Beer>[] = [];
+    let promises: Promise<Beer[]>[] = [];
+    
+    // Pepare individual search requests for each beer name
     for (const beer of beers) {
       promises.push(this.untappdService.getSearchResults(beer).toPromise());
     }
 
+    // Get an array of each search result
     const data = await forkJoin(promises).toPromise();
-    data.forEach((search) => {
-      beerIds.push(search[0].bid);
-    });
-    
-    let beersWithRanks: Beer[] = [];
 
-    for (const beerId of beerIds) {
-      const beerInfo = await this.untappdService.getBeerInfo(beerId).toPromise();
+    // Take the first beer from each search result store it as a beer to be used for ranking
+    let beersToRank: Beer[] = [];
+    data.forEach((search) => {
+      beersToRank.push(search[0]);
+    });
+
+    let beersWithRanks: Beer[] = [];
+    for (const beer of beersToRank) {
+      // Call get getBeerInfo for each beer so in order to get the rating score
+      // This is because rating_score not included with beer from search request
+      const beerInfo = await this.untappdService.getBeerInfo(beer.bid).toPromise();
       if (beerInfo) {
         beersWithRanks.push(beerInfo);
       }
