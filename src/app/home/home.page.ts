@@ -10,12 +10,7 @@ import { OcrSpaceMockService } from '../services/ocr-space-mock.service';
 
 import { forkJoin } from 'rxjs';
 import { BeerDetectService } from '../services/beer-detect.service';
-
-interface BeerRank {
-  name: string;
-  abv: string;
-  rank: number;
-}
+import { Beer } from '../models/beer.model'
 
 @Component({
   selector: 'app-home',
@@ -28,7 +23,7 @@ export class HomePage {
   strippedTextArray = [];
   doneParsing = false;
   selectedBeers: string[] = [];
-  beersWithRanks: BeerRank[] = [];
+  beersWithRanks: Beer[] = [];
 
   constructor(public loadingController: LoadingController,
     public untappdService: UntappdMockService,
@@ -65,32 +60,27 @@ export class HomePage {
 
   private async rankBeers(beers: string[]) {
     let beerIds = [];
-    let promises: Promise<any>[] = [];
+    let promises: Promise<Beer>[] = [];
     for (const beer of beers) {
       promises.push(this.untappdService.getSearchResults(beer).toPromise());
     }
 
     const data = await forkJoin(promises).toPromise();
     data.forEach((search) => {
-      beerIds.push(search.response.beers.items[0].beer.bid);
+      beerIds.push(search[0].bid);
     });
-
-    let beersWithRanks: BeerRank[] = [];
+    
+    let beersWithRanks: Beer[] = [];
 
     for (const beerId of beerIds) {
       const beerInfo = await this.untappdService.getBeerInfo(beerId).toPromise();
       if (beerInfo) {
-        const beer = {
-          name: beerInfo.response.beer.beer_name,
-          abv: beerInfo.response.beer.beer_abv + '%',
-          rank: beerInfo.response.beer.rating_score,
-        }
-        beersWithRanks.push(beer);
+        beersWithRanks.push(beerInfo);
       }
     }
 
     beersWithRanks.sort(function (a, b) {
-      return b.rank - a.rank;
+      return b.rating_score - a.rating_score;
     });
 
     this.beersWithRanks = beersWithRanks;

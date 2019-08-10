@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { Beer } from '../models/beer.model';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +10,7 @@ export class UntappdMockService {
 
   constructor() { }
 
-  getBeerInfo(beerId: number): Observable<any> {
+  getBeerInfo(beerId: number): Observable<Beer> {
     return of({
         "meta": {
             "code": 200,
@@ -3111,7 +3113,14 @@ export class UntappdMockService {
                 }
             }
         }
-    })
+    }).pipe(map(beerInfo => {
+        const beer: Beer = {
+            beer_name: beerInfo.response.beer.beer_name,
+            beer_abv: beerInfo.response.beer.beer_abv + '%',
+            rating_score: beerInfo.response.beer.rating_score,
+          };
+          return beer;
+    }));
 
   }
 
@@ -4180,6 +4189,18 @@ export class UntappdMockService {
                 "count": 0
             }
         }
-    })
+    }).pipe(map((search: any) => {
+        let beers: Beer[] = [];
+        search.response.beers.items.forEach((beerInfo) => {
+          const beer: Beer = {
+            bid: beerInfo.beer.bid,
+            beer_name: beerInfo.beer.beer_name,
+            beer_abv: beerInfo.beer.beer_abv + '%',
+            rating_score: beerInfo.beer.rating_score,
+          };
+          beers.push(beer);
+        })
+        return beers;
+      }));
   }
 }
