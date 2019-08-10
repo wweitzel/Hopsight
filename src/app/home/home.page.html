@@ -10,17 +10,29 @@
 </ion-header>
 
 <ion-content>
-    <ion-card class="welcome-card">
-      <ion-card-header>
-        <ion-card-subtitle>Get Started</ion-card-subtitle>
-        <ion-card-title>Welcome to Hopsight</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <p>Click the camera button to take a picture of a beer menu.</p>
-      </ion-card-content>
-    </ion-card>
-    <div id="camera-button-container">
-        <input style="display: none;" #inputcamera type="file" accept="image/*" (change)="handleImage($event)"/>
-      <ion-button id="camera-button" (click)="inputcamera.click()">Camera</ion-button>
-    </div>
+  <ion-progress-bar *ngIf="loading" type="indeterminate"></ion-progress-bar>
+  <ion-card class="welcome-card">
+    <ion-card-header>
+      <ion-card-subtitle>Get Started</ion-card-subtitle>
+      <ion-card-title>Welcome to Hopsight</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>Click the camera button to take a picture of a beer menu.</p>
+    </ion-card-content>
+  </ion-card>
+  <div id="camera-button-container">
+    <input style="display: none;" #inputcamera type="file" accept="image/*" (change)="handleImage($event)" />
+    <ion-button id="camera-button" (click)="inputcamera.click()">Camera</ion-button>
+  </div>
+  <div *ngIf="doneParsing" id="beer-select">
+    <div id="select-tip">Now select all beers from the possible beer list below</div>
+    <ion-item>
+      <ion-label>Possible Beers</ion-label>
+      <ion-select multiple="true" placeholder="Select beer names" (ionChange)="handleSelection($event)">
+        <ion-select-option *ngFor="let line of strippedTextArray">{{line}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </div>
+  
+  <!-- <pre>{{ imageText }}</pre> -->
 </ion-content>
