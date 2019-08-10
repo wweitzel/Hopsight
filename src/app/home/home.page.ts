@@ -127,7 +127,7 @@ export class HomePage {
     const options = {
       maxSizeMB: 1,
       maxWidthOrHeight: 1920,
-      useWebWorker: false
+      useWebWorker: true
     };
 
     return await imageCompression(img, options);
