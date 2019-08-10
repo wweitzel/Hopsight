@@ -9,11 +9,7 @@ import { OcrSpaceService } from '../services/ocr-space.service';
 import { OcrSpaceMockService } from '../services/ocr-space-mock.service';
 
 import { forkJoin } from 'rxjs';
-
-const stateList = new Array("AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "GU", "HI", "IA", "ID", "IL",
-  "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MH", "MI", "MN", "MO", "MS", "MT", "NC", "ND", "NE",
-  "NH", "NJ", "NM", "NV", "NY", "OH", "OK", "OR", "PA", "PR", "PW", "RI", "SC", "SD", "TN", "TX",
-  "UT", "VA", "VI", "VT", "WA", "WI", "WV", "WY");
+import { BeerDetectService } from '../services/beer-detect.service';
 
 interface BeerRank {
   name: string;
@@ -35,7 +31,8 @@ export class HomePage {
 
   constructor(public loadingController: LoadingController,
     public untappdService: UntappdMockService,
-    public ocrSpaceService: OcrSpaceMockService) { }
+    public ocrSpaceService: OcrSpaceMockService,
+    private beerDetectService: BeerDetectService) { }
 
   async imageSelected(event) {
     await this.presentLoading('Parsing image...');
@@ -61,27 +58,7 @@ export class HomePage {
     const ocrResp = await this.ocrSpaceService.getParsedText(base64).toPromise();
 
     const imageText = ocrResp.ParsedResults[0].ParsedText;
-
-    let textAsArray = imageText.split(/\r?\n/);
-    textAsArray.forEach((line) => {
-      line = line.replace('...', ' ').trim();
-      let lineArray = line.split(/[ ]+/);
-      if (lineArray.length < 1) return;
-      let strippedLine = '';
-      lineArray.forEach((word) => {
-        if (!word.includes('%') && !word.includes('$') && !stateList.includes(word.replace(/[()]/g, ''))) {
-          strippedLine = strippedLine + word + ' ';
-        }
-      });
-      this.strippedTextArray.push(strippedLine);
-    });
-
-    let newText = '';
-    this.strippedTextArray.forEach((line) => {
-      newText = newText + line + '\n';
-    });
-
-    this.imageText = newText;
+    this.strippedTextArray = this.beerDetectService.getBeerSerchTerms(imageText);
     this.doneParsing = true;
   }
 
