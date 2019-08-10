@@ -20,6 +20,7 @@
       </ion-card-content>
     </ion-card>
     <div id="camera-button-container">
-      <ion-button id="camera-button">Camera</ion-button>
+        <input style="display: none;" #inputcamera type="file" accept="image/*" (change)="handleImage($event)"/>
+      <ion-button id="camera-button" (click)="inputcamera.click()">Camera</ion-button>
     </div>
 </ion-content>
