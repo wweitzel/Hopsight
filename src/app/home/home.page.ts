@@ -4,9 +4,11 @@ import { LoadingController } from '@ionic/angular';
 
 import imageCompression from 'lib/browser-image-compression/browser-image-compression';
 import { UntappdService } from '../services/untappd.service';
+import { UntappdMockService } from '../services/untappd-mock.service';
+import { OcrSpaceService } from '../services/ocr-space.service';
+import { OcrSpaceMockService } from '../services/ocr-space-mock.service';
 
 import { forkJoin } from 'rxjs';
-import { OcrSpaceService } from '../services/ocr-space.service';
 
 const stateList = new Array("AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "GU", "HI", "IA", "ID", "IL",
   "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MH", "MI", "MN", "MO", "MS", "MT", "NC", "ND", "NE",
@@ -27,29 +29,37 @@ export class HomePage {
 
   imageText = '';
   strippedTextArray = [];
-  selectedBeers = [];
   doneParsing = false;
+  selectedBeers: string[] = [];
   beersWithRanks: BeerRank[] = [];
 
   constructor(public loadingController: LoadingController,
-    public untappdService: UntappdService,
-    public ocrSpaceService: OcrSpaceService) { }
+    public untappdService: UntappdMockService,
+    public ocrSpaceService: OcrSpaceMockService) { }
 
-  async handleImage(event) {
+  async imageSelected(event) {
+    await this.presentLoading('Parsing image...');
+    await this.handleImage(event).finally(async () => {
+      await this.dismissLoading();
+    });
+  }
+
+  async beersSelected(event) {
+    await this.presentLoading('Ranking beers...');
+    await this.rankBeers(event.detail.value).finally(async () => {
+      await this.dismissLoading();
+    });
+  }
+
+  private async handleImage(event) {
     this.selectedBeers = [];
     this.doneParsing = false;
-    this.presentLoading('Parsing image...');
     const file = event.target.files[0];
+    
     const compressedImage = await this.compressImage(file);
     const base64 = await this.toBase64(compressedImage);
-
-    // Comment to stop using real data
     const ocrResp = await this.ocrSpaceService.getParsedText(base64).toPromise();
-    
-    // Uncomment to use mock data
-    // const ocrResp = {"ParsedResults":[{"TextOverlay":{"Lines":[],"HasOverlay":false,"Message":"Text overlay is not provided as it is not requested"},"TextOrientation":"0","FileParseExitCode":1,"ParsedText":"Dachnik True Helles Lager 4.4%\r\nExclusively for Dacha by DC Brau.\r\nWeihenstephaner Pilsner 5.1%\r\nStronger, more flavorful and true to the style.\r\nWeihenstephaner Hefeweizcn 5.4%\r\nHefe which all other hefes are compared to!\r\nWeihenstephaner Vitus 7.7%\r\nThe King of wheat beers. The Game Changer.\r\nWeihenstephaner Kristallweizen 5.4%\r\nRare, filtered and less filling hefe.\r\nWeihenstephaner Dunkelweizen 5.3%\r\nDarker, maltier version of our top notch hefe.\r\nWeihenstephaner Korbinian 7.4%\r\nA legendary doppelbock! Dark and very drinkable.\r\nSion Kölsch 4.8%\r\nAuthentic, crisp pale ale brewed only in Köln.\r\nSchofferhofer Grapefruit Radler 2.5%\r\nMy name is Hefe, but you can call me Radler.\r\nAllagash White 5.1%\r\nFamously refreshing witbier brewed in Maine.\r\nDC Brau Joint Resolution Hazy IPA 5.5%\r\nMadame Speaker, I will not yield the rest of my pint!\r\nRight Proper Raised by Wolves 5.0%\r\nAromatic, juicy, well-balanced Pale Ale.\r\nFirestone Walker Union Jack IPA 7.5%\r\nWest Coast IPA royalty - big, piny, solid.\r\nStone, Delicious IPA 7.7%\r\nIntensely, beautifully, lordly hopped deliciousness.\r\n9 1 Pint\r\n910.5L\r\n910.5L\r\n12 lo.5L\r\n1010.5L\r\n1010.5L\r\n11 10.5L\r\n810.4L\r\n910.5L\r\n9 | Pint\r\n9 | Pint\r\n9 | Pint\r\n9 | Pint\r\n9 1 Pint\r\n","ErrorMessage":"","ErrorDetails":""}],"OCRExitCode":1,"IsErroredOnProcessing":false,"ProcessingTimeInMilliseconds":"491","SearchablePDFURL":"Searchable PDF not generated as it was not requested."};
-    
-    this.dismissLoading();
+
     const imageText = ocrResp.ParsedResults[0].ParsedText;
 
     let textAsArray = imageText.split(/\r?\n/);
@@ -75,31 +85,20 @@ export class HomePage {
     this.doneParsing = true;
   }
 
-  handleSelection(event) {
-    this.rankBeers(event.detail.value);
-  }
-
   private async rankBeers(beers: string[]) {
-    this.presentLoading('Ranking beers...');
     let beerIds = [];
     let promises: Promise<any>[] = [];
     for (const beer of beers) {
       promises.push(this.untappdService.getSearchResults(beer).toPromise());
     }
 
-    // Comment to stop using real data
     const data = await forkJoin(promises).toPromise();
     data.forEach((search) => {
       beerIds.push(search.response.beers.items[0].beer.bid);
     });
 
-    // Uncomment to use mock data
-    // beerIds.push('12345');
-    // beerIds.push('6789');
-
     let beersWithRanks: BeerRank[] = [];
 
-    // Comment to stop using real data
     for (const beerId of beerIds) {
       const beerInfo = await this.untappdService.getBeerInfo(beerId).toPromise();
       if (beerInfo) {
@@ -111,16 +110,11 @@ export class HomePage {
       }
     }
 
-    // Uncomment to use mock data
-    // beersWithRanks.push({name: 'beer 1', rank: 4.333});
-    // beersWithRanks.push({name: 'beer 2', rank: 2.344});
-
     beersWithRanks.sort(function (a, b) {
       return b.rank - a.rank;
     });
 
     this.beersWithRanks = beersWithRanks;
-    this.dismissLoading();
   }
 
   private async compressImage(img) {
@@ -148,7 +142,9 @@ export class HomePage {
   }
 
   private async dismissLoading() {
-    await this.loadingController.dismiss();
+    if (this.loadingController.getTop()) {
+      await this.loadingController.dismiss();
+    }
   }
 
 }
