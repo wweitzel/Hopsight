@@ -33,6 +33,24 @@
       </ion-select>
     </ion-item>
   </div>
-  
+
+  <div id="beer-table-container">
+    <table id="beer-table">
+      <thead>
+        <tr>
+          <th class="row-1 row-name">Beer Name</th>
+          <th class="row-2 row-abv">ABV</th>
+          <th class="row-3 row-rating">Rating</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let beer of beersWithRanks">
+          <td>{{beer.name}}</td>
+          <td>{{beer.abv}}</td>
+          <td>{{beer.rank}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
   <!-- <pre>{{ imageText }}</pre> -->
 </ion-content>
