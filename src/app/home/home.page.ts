@@ -13,6 +13,7 @@ import { BeerDetectService } from '../services/beer-detect.service';
 
 interface BeerRank {
   name: string;
+  abv: string;
   rank: number;
 }
 
@@ -81,7 +82,8 @@ export class HomePage {
       if (beerInfo) {
         const beer = {
           name: beerInfo.response.beer.beer_name,
-          rank: beerInfo.response.beer.rating_score
+          abv: beerInfo.response.beer.beer_abv + '%',
+          rank: beerInfo.response.beer.rating_score,
         }
         beersWithRanks.push(beer);
       }
