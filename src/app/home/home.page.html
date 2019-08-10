@@ -28,7 +28,7 @@
     <div id="select-tip">Now select all beers from the possible beer list below</div>
     <ion-item>
       <ion-label>Possible Beers</ion-label>
-      <ion-select multiple="true" placeholder="Select beer names" (ionChange)="handleSelection($event)">
+      <ion-select multiple="true" placeholder="Select beer names" (ionChange)="beersSelected($event)">
         <ion-select-option *ngFor="let line of strippedTextArray">{{line}}</ion-select-option>
       </ion-select>
     </ion-item>
@@ -52,5 +52,4 @@
       </tbody>
     </table>
   </div>
-  <!-- <pre>{{ imageText }}</pre> -->
 </ion-content>
