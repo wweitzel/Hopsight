@@ -21,7 +21,7 @@
     </ion-card-content>
   </ion-card>
   <div id="camera-button-container">
-    <input style="display: none;" #inputcamera type="file" accept="image/*" (change)="handleImage($event)" />
+    <input style="display: none;" #inputcamera type="file" accept="image/*" (change)="imageSelected($event)" />
     <ion-button id="camera-button" (click)="inputcamera.click()">Camera</ion-button>
   </div>
   <div *ngIf="doneParsing" id="beer-select">
