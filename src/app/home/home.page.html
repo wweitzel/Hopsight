@@ -10,8 +10,7 @@
 </ion-header>
 
 <ion-content>
-  <ion-progress-bar *ngIf="loading" type="indeterminate"></ion-progress-bar>
-  <ion-card class="welcome-card">
+  <ion-card *ngIf="showGetStarted" class="welcome-card">
     <ion-card-header>
       <ion-card-subtitle>Get Started</ion-card-subtitle>
       <ion-card-title>Welcome to Hopsight</ion-card-title>
@@ -52,4 +51,6 @@
       </tbody>
     </table>
   </div>
+
+  <div id="error-message">{{ errorMessage }}</div>
 </ion-content>

@@ -20,20 +20,23 @@ import { Beer } from '../models/beer.model'
 export class HomePage {
 
   imageText = '';
-  strippedTextArray = [];
+  errorMessage = '';
   doneParsing = false;
+  showGetStarted = true;
+  strippedTextArray = [];
   selectedBeers: string[] = [];
   beersWithRanks: Beer[] = [];
-
+  
   constructor(public loadingController: LoadingController,
-    public untappdService: UntappdMockService,
-    public ocrSpaceService: OcrSpaceMockService,
+    public untappdService: UntappdService,
+    public ocrSpaceService: OcrSpaceService,
     private beerDetectService: BeerDetectService) { }
 
   async imageSelected(event) {
     await this.presentLoading('Parsing image...');
     this.doneParsing = false;
     this.beersWithRanks = [];
+    this.errorMessage = '';
     await this.handleImage(event).finally(async () => {
       await this.dismissLoading();
       this.doneParsing = true;
@@ -44,6 +47,7 @@ export class HomePage {
     await this.presentLoading('Ranking beers...');
     await this.rankBeers(event.detail.value).finally(async () => {
       await this.dismissLoading();
+      this.showGetStarted = false;
     });
   }
 
@@ -73,7 +77,11 @@ export class HomePage {
     // Take the first beer from each search result store it as a beer to be used for ranking
     let beersToRank: Beer[] = [];
     data.forEach((search) => {
-      beersToRank.push(search[0]);
+      if (search.length > 0) {
+        beersToRank.push(search[0]);
+      } else {
+        this.errorMessage = 'Not all beers could be ranked.'
+      }
     });
 
     let beersWithRanks: Beer[] = [];
