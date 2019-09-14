@@ -21,12 +21,24 @@ export class BeerDetectService {
       if (lineArray.length < 1) return;
       let strippedLine = '';
       lineArray.forEach((word) => {
-        if (!word.includes('%') && !word.includes('$') && !stateList.includes(word.replace(/[()]/g, ''))) {
+        if (!word.includes('%') && !word.includes('$') && (!word.includes('(') && !word.includes(')'))) {
           strippedLine = strippedLine + word + ' ';
         }
       });
-      strippedTextArray.push(strippedLine);
+      const strippedLineArray = strippedLine.split(/[ ]+/);
+      if (strippedLineArray.length > 2 && strippedLineArray.length < 12 && this.hasStringWithLength(3, strippedLineArray)) {
+        strippedTextArray.push(strippedLine);
+      }
     });
     return strippedTextArray;
+  }
+
+  private hasStringWithLength(length: number, array: string[]): boolean {
+    for (let str of array) {
+      if (str.length > length) {
+        return true;
+      }
+    }
+    return false;
   }
 }

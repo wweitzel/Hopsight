@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
 
 import imageCompression from 'lib/browser-image-compression/browser-image-compression';
-import { UntappdService } from '../services/untappd.service';
+import { UntappdService, SearchResult } from '../services/untappd.service';
 import { UntappdMockService } from '../services/untappd-mock.service';
 import { OcrSpaceService } from '../services/ocr-space.service';
 import { OcrSpaceMockService } from '../services/ocr-space-mock.service';
@@ -25,7 +25,7 @@ export class HomePage {
   showGetStarted = true;
   strippedTextArray = [];
   selectedBeers: string[] = [];
-  beersWithRanks: Beer[] = [];
+  beersWithRanks: any[] = [];
   
   constructor(public loadingController: LoadingController,
     public untappdService: UntappdService,
@@ -64,7 +64,7 @@ export class HomePage {
   }
 
   private async rankBeers(beers: string[]) {
-    let promises: Promise<Beer[]>[] = [];
+    let promises: Promise<SearchResult>[] = [];
     
     // Pepare individual search requests for each beer name
     for (const beer of beers) {
@@ -75,30 +75,56 @@ export class HomePage {
     const data = await forkJoin(promises).toPromise();
 
     // Take the first beer from each search result store it as a beer to be used for ranking
-    let beersToRank: Beer[] = [];
-    data.forEach((search) => {
-      if (search.length > 0) {
-        beersToRank.push(search[0]);
+    let beersToRank: any[] = [];
+    for (let search of data) {
+      if (search.searchResult.length > 0) {
+        beersToRank.push({searchTerm: search.searchTerm, beer: search.searchResult[0]});
       } else {
-        this.errorMessage = 'Not all beers could be ranked.'
+        const stripped = this.stripAfterDash(search.searchTerm);
+        if (stripped) {
+          const result = await this.untappdService.getSearchResults(stripped).toPromise();
+          if (result.searchResult.length > 0) {
+            beersToRank.push({searchTerm: result.searchTerm, beer: result.searchResult[0]});
+          } else {
+            this.errorMessage = 'Not all beers could be ranked.'
+          }
+        } else {
+          this.errorMessage = 'Not all beers could be ranked.'
+        }
       }
-    });
+    }
 
-    let beersWithRanks: Beer[] = [];
+    let beersWithRanks: any[] = [];
     for (const beer of beersToRank) {
       // Call get getBeerInfo for each beer so in order to get the rating score
       // This is because rating_score not included with beer from search request
-      const beerInfo = await this.untappdService.getBeerInfo(beer.bid).toPromise();
+      const beerInfo = await this.untappdService.getBeerInfo(beer.beer.bid).toPromise();
       if (beerInfo) {
-        beersWithRanks.push(beerInfo);
+        beersWithRanks.push({searchTerm: beer.searchTerm, beer: beerInfo});
       }
     }
 
     beersWithRanks.sort(function (a, b) {
-      return b.rating_score - a.rating_score;
+      return b.beer.rating_score - a.beer.rating_score;
     });
 
     this.beersWithRanks = beersWithRanks;
+  }
+
+  private stripAfterDash(text: string): string {
+    let index: number = null;
+    if (text.lastIndexOf(String.fromCharCode(8211)) !== -1) {
+      index = text.lastIndexOf(String.fromCharCode(8211));
+    } else if (text.lastIndexOf(String.fromCharCode(8212)) !== -1) {
+      index = text.lastIndexOf(String.fromCharCode(8212));
+    } else if (text.lastIndexOf(String.fromCharCode(8722)) !== -1) {
+      index = text.lastIndexOf(String.fromCharCode(8722));
+    }
+    if (index) {
+      return text.slice(0, index);
+    } else {
+      return null;
+    }
   }
 
   private async compressImage(img) {
