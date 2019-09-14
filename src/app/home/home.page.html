@@ -44,9 +44,9 @@
       </thead>
       <tbody>
         <tr *ngFor="let beer of beersWithRanks">
-          <td>{{beer.beer_name}}</td>
-          <td>{{beer.beer_abv}}</td>
-          <td>{{beer.rating_score}}</td>
+          <td>{{beer.searchTerm}}</td>
+          <td>{{beer.beer.beer_abv}}</td>
+          <td>{{beer.beer.rating_score}}</td>
         </tr>
       </tbody>
     </table>

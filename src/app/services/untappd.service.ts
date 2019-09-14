@@ -6,6 +6,11 @@ import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { Beer } from '../models/beer.model';
 
+export interface SearchResult {
+  searchTerm: string,
+  searchResult: Beer[]
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -32,7 +37,7 @@ export class UntappdService {
     }));
   }
 
-  getSearchResults(text: string): Observable<Beer[]> {
+  getSearchResults(text: string): Observable<SearchResult> {
     const url = this.url + '/search/beer';
     let params = new HttpParams();
     params = params.append('client_id', this.clientId);
@@ -49,7 +54,7 @@ export class UntappdService {
         };
         beers.push(beer);
       })
-      return beers;
+      return {searchTerm: text, searchResult: beers};
     }));
   }
 }
