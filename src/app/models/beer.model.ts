@@ -8,4 +8,6 @@ export interface Beer {
     rating_score?: number;
     beer_ibu?: number;
     brewery?: Brewery;
+    beer_description?: string;
+    beer_style?: string;
 }

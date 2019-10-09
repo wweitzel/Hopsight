@@ -43,7 +43,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let beer of beersWithRanks">
+        <tr *ngFor="let beer of beersWithRanks" (click)="rowClicked(beer)">
           <td>{{beer.searchTerm}}</td>
           <td>{{beer.beer.beer_abv}}</td>
           <td>{{beer.beer.rating_score}}</td>
