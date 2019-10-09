@@ -11,6 +11,7 @@ import { OcrSpaceMockService } from '../services/ocr-space-mock.service';
 import { forkJoin } from 'rxjs';
 import { BeerDetectService } from '../services/beer-detect.service';
 import { Beer } from '../models/beer.model'
+import { Router, NavigationExtras } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -30,6 +31,7 @@ export class HomePage {
   constructor(public loadingController: LoadingController,
     public untappdService: UntappdService,
     public ocrSpaceService: OcrSpaceService,
+    public router: Router,
     private beerDetectService: BeerDetectService) { }
 
   async imageSelected(event) {
@@ -61,6 +63,15 @@ export class HomePage {
 
     const imageText = ocrResp.ParsedResults[0].ParsedText;
     this.strippedTextArray = this.beerDetectService.getBeerSerchTerms(imageText);
+  }
+
+  rowClicked(row) {
+    let navigationExtras: NavigationExtras = {
+      state: {
+        beer: row.beer
+      }
+    };
+    this.router.navigate(['beer-details'], navigationExtras);
   }
 
   private async rankBeers(beers: string[]) {

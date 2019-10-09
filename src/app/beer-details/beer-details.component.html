@@ -1,0 +1,19 @@
+<!-- Default back button -->
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div id="beer-details">
+    <p>Beer Name: {{beer.beer_name}}</p>
+    <p>Brewery: {{beer.brewery.brewery_name}}</p>
+    <p>Style: {{beer.beer_style}}</p>
+    <p>Beer ABV: {{beer.beer_abv}}</p>
+    <p>Rating Score: {{beer.rating_score}}</p>
+    <p>Rating Count: {{beer.rating_count}}</p>
+    <p>Description: {{beer.beer_description}}</p>
+  </div>
+</ion-content>

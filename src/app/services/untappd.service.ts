@@ -32,6 +32,12 @@ export class UntappdService {
         beer_name: beerInfo.response.beer.beer_name,
         beer_abv: beerInfo.response.beer.beer_abv + '%',
         rating_score: beerInfo.response.beer.rating_score,
+        rating_count: beerInfo.response.beer.rating_count,
+        brewery: beerInfo.response.beer.brewery,
+        beer_ibu: beerInfo.response.beer.beer_ibu,
+        bid: beerInfo.response.beer.bid,
+        beer_description: beerInfo.response.beer.beer_description,
+        beer_style: beerInfo.response.beer.beer_style
       };
       return beer;
     }));
@@ -51,6 +57,11 @@ export class UntappdService {
           beer_name: beerInfo.beer.beer_name,
           beer_abv: beerInfo.beer.beer_abv + '%',
           rating_score: beerInfo.beer.rating_score,
+          rating_count: beerInfo.beer.rating_count,
+          brewery: beerInfo.beer.brewery,
+          beer_description: beerInfo.beer.beer_description,
+          beer_style: beerInfo.beer.beer_style,
+          beer_ibu: beerInfo.beer.beer_ibu,
         };
         beers.push(beer);
       })
