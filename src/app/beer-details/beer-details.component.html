@@ -8,8 +8,11 @@
 </ion-header>
 <ion-content>
   <div id="beer-details">
+    <img [src]="beer.beer_label" alt="Beer Image">
     <p>Beer Name: {{beer.beer_name}}</p>
     <p>Brewery: {{beer.brewery.brewery_name}}</p>
+    <p>City: {{beer.brewery.location.brewery_city}}</p>
+    <p>State: {{beer.brewery.location.brewery_state}}</p>
     <p>Style: {{beer.beer_style}}</p>
     <p>Beer ABV: {{beer.beer_abv}}</p>
     <p>Rating Score: {{beer.rating_score}}</p>
