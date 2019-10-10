@@ -10,4 +10,5 @@ export interface Beer {
     brewery?: Brewery;
     beer_description?: string;
     beer_style?: string;
+    beer_label?: string;
 }

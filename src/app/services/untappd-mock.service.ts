@@ -3125,6 +3125,7 @@ export class UntappdMockService {
             beer_description: beerInfo.response.beer.beer_description,
             beer_style: beerInfo.response.beer.beer_style,
             beer_ibu: beerInfo.response.beer.beer_ibu,
+            beer_label: beerInfo.response.beer.beer_label
           };
           return beer;
     }));
@@ -4209,6 +4210,7 @@ export class UntappdMockService {
             beer_description: beerInfo.beer.beer_description,
             beer_style: beerInfo.beer.beer_style,
             beer_ibu: beerInfo.beer.beer_ibu,
+            beer_label: beerInfo.beer.beer_label
           };
           beers.push(beer);
         })
