@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
-import { LoadingController } from '@ionic/angular';
+import { LoadingController, MenuController } from '@ionic/angular';
 
 import imageCompression from 'lib/browser-image-compression/browser-image-compression';
 import { UntappdService, SearchResult } from '../services/untappd.service';
@@ -10,7 +10,6 @@ import { OcrSpaceMockService } from '../services/ocr-space-mock.service';
 
 import { forkJoin } from 'rxjs';
 import { BeerDetectService } from '../services/beer-detect.service';
-import { Beer } from '../models/beer.model'
 import { Router, NavigationExtras } from '@angular/router';
 
 @Component({
@@ -18,7 +17,7 @@ import { Router, NavigationExtras } from '@angular/router';
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage {
+export class HomePage implements OnInit {
 
   imageText = '';
   errorMessage = '';
@@ -32,8 +31,13 @@ export class HomePage {
     public untappdService: UntappdService,
     public ocrSpaceService: OcrSpaceService,
     public router: Router,
-    private beerDetectService: BeerDetectService) { }
+    private beerDetectService: BeerDetectService,
+    public menu: MenuController) { }
 
+  ngOnInit() {
+    this.menu.enable(true);
+  }
+  
   async imageSelected(event) {
     await this.presentLoading('Parsing image...');
     this.doneParsing = false;
