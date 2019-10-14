@@ -32,31 +32,14 @@ export class HomePage {
     public untappdService: UntappdService,
     public ocrSpaceService: OcrSpaceService,
     public router: Router,
-    private beerDetectService: BeerDetectService,
+    public beerDetectService: BeerDetectService,
     public menu: MenuController,
     public toastController: ToastController,
-    private route: ActivatedRoute,
+    public route: ActivatedRoute,
     public authService: AuthService) { }
 
-  ngOnInit() {
-    const access_token = this.route.snapshot.queryParamMap.get("access_token")
-    if (access_token) {
-      this.authService.login(access_token);
-      this.presentLoginToast(true);
-    }
-    if (!this.authService.isLoggedIn()) {
-      this.router.navigate(['/login']);
-      return;
-    }
+  ionViewWillEnter() {
     this.menu.enable(true);
-  }
-
-  async presentLoginToast(success: boolean) {
-    const toast = await this.toastController.create({
-      message: success ? 'Login successful.' : 'Login failed.',
-      duration: 2000
-    });
-    toast.present();
   }
 
   async imageSelected(event) {
@@ -104,7 +87,7 @@ export class HomePage {
     
     // Pepare individual search requests for each beer name
     for (const beer of beers) {
-      promises.push(this.untappdService.getSearchResults(beer).toPromise());
+      promises.push(this.untappdService.getSearchResults(beer));
     }
 
     // Get an array of each search result
@@ -118,7 +101,7 @@ export class HomePage {
       } else {
         const stripped = this.stripAfterDash(search.searchTerm);
         if (stripped) {
-          const result = await this.untappdService.getSearchResults(stripped).toPromise();
+          const result = await this.untappdService.getSearchResults(stripped);
           if (result.searchResult.length > 0) {
             beersToRank.push({searchTerm: result.searchTerm, beer: result.searchResult[0]});
           } else {
@@ -134,7 +117,7 @@ export class HomePage {
     for (const beer of beersToRank) {
       // Call get getBeerInfo for each beer so in order to get the rating score
       // This is because rating_score not included with beer from search request
-      const beerInfo = await this.untappdService.getBeerInfo(beer.beer.bid).toPromise();
+      const beerInfo = await this.untappdService.getBeerInfo(beer.beer.bid);
       if (beerInfo) {
         beersWithRanks.push({searchTerm: beer.searchTerm, beer: beerInfo});
       }

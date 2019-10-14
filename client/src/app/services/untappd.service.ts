@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { environment } from '../../environments/environment';
@@ -24,10 +23,10 @@ export class UntappdService {
   constructor(private http: HttpClient,
               private authService: AuthService) { }
 
-  getBeerInfo(beerId: number): Observable<Beer> {
+  async getBeerInfo(beerId: number): Promise<Beer> {
     const url = this.url + '/beer/info/' + beerId;
     let params = new HttpParams();
-    params = params.append('access_token', this.authService.getAccessToken());
+    params = params.append('access_token', await this.authService.getAccessToken());
     return this.http.get<any>(url, { params }).pipe(map(beerInfo => {
       const beer: Beer = {
         beer_name: beerInfo.response.beer.beer_name,
@@ -42,13 +41,13 @@ export class UntappdService {
         beer_label: beerInfo.response.beer.beer_label
       };
       return beer;
-    }));
+    })).toPromise();
   }
 
-  getSearchResults(text: string): Observable<SearchResult> {
+  async getSearchResults(text: string): Promise<SearchResult> {
     const url = this.url + '/search/beer';
     let params = new HttpParams();
-    params = params.append('access_token', this.authService.getAccessToken());
+    params = params.append('access_token', await this.authService.getAccessToken());
     params = params.append('q', text);
     return this.http.get(url, { params }).pipe(map((search: any) => {
       let beers: Beer[] = [];
@@ -68,6 +67,6 @@ export class UntappdService {
         beers.push(beer);
       })
       return {searchTerm: text, searchResult: beers};
-    }));
+    })).toPromise();
   }
 }

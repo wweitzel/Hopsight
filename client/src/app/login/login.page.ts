@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
-import { environment } from 'src/environments/environment';
-import { MenuController } from '@ionic/angular';
+import { MenuController, ToastController, Platform } from '@ionic/angular';
 import { AuthService } from '../services/auth.service';
 
 @Component({
@@ -12,15 +11,33 @@ import { AuthService } from '../services/auth.service';
 })
 export class LoginPage implements OnInit {
 
-  constructor(private router: Router,
+  constructor(public router: Router,
               public menu: MenuController,
-              public authService: AuthService) { }
+              public authService: AuthService,
+              public route: ActivatedRoute,
+              public toastController: ToastController,
+              public platform: Platform) { }
 
   ngOnInit() {
-    this.menu.enable(false);
-    if (this.authService.isLoggedIn()) {
-      this.router.navigate(['/home']);
+    this.authService.isLoggedIn().then((resp) => {
+      if (resp) {
+        this.router.navigate(['/home']);
+        return;
+      }
+    });
+    if (!this.platform.is('cordova')) {
+      const access_token = this.route.snapshot.queryParamMap.get("access_token")
+      if (access_token) {
+        this.authService.login(access_token).then(() => {
+          this.router.navigate(['/home']);
+          this.authService.presentLoginToast(true);
+        })
+      }
     }
+  }
+
+  ionViewWillEnter() {
+    this.menu.enable(false);
   }
 
 }
