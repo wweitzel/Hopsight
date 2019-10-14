@@ -1,0 +1,17 @@
+{
+  "projects": {
+    "default": "hopsightbeer"
+  },
+  "targets": {
+    "hopsightbeer": {
+      "hosting": {
+        "client": [
+          "hopsightbeer"
+        ],
+        "server": [
+          "hopsightbeerapi"
+        ]
+      }
+    }
+  }
+}

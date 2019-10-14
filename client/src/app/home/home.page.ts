@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
-import { LoadingController, MenuController } from '@ionic/angular';
+import { LoadingController, MenuController, ToastController } from '@ionic/angular';
 
 import imageCompression from 'lib/browser-image-compression/browser-image-compression';
 import { UntappdService, SearchResult } from '../services/untappd.service';
@@ -10,14 +10,14 @@ import { OcrSpaceMockService } from '../services/ocr-space-mock.service';
 
 import { forkJoin } from 'rxjs';
 import { BeerDetectService } from '../services/beer-detect.service';
-import { Router, NavigationExtras } from '@angular/router';
+import { Router, NavigationExtras, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage implements OnInit {
+export class HomePage {
 
   imageText = '';
   errorMessage = '';
@@ -32,12 +32,31 @@ export class HomePage implements OnInit {
     public ocrSpaceService: OcrSpaceService,
     public router: Router,
     private beerDetectService: BeerDetectService,
-    public menu: MenuController) { }
+    public menu: MenuController,
+    public toastController: ToastController,
+    private route: ActivatedRoute) { }
 
   ngOnInit() {
+    const access_token = this.route.snapshot.queryParamMap.get("access_token")
+    if (access_token) {
+      localStorage.setItem('access_token_hopsight', access_token);
+      this.presentLoginToast(true);
+    }
+    if (!localStorage.getItem('access_token_hopsight')) {
+      this.router.navigate(['/login']);
+      return;
+    }
     this.menu.enable(true);
   }
-  
+
+  async presentLoginToast(success: boolean) {
+    const toast = await this.toastController.create({
+      message: success ? 'Login successful.' : 'Login failed.',
+      duration: 2000
+    });
+    toast.present();
+  }
+
   async imageSelected(event) {
     await this.presentLoading('Parsing image...');
     this.doneParsing = false;
