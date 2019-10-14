@@ -30,7 +30,7 @@ export class BeerDetectService {
       if (this.isNumber(strippedLineArray[strippedLineArray.length - 1])) {
         strippedLineArray.pop();
       }
-      if (strippedLineArray.length > 2 && strippedLineArray.length < 12 && this.hasStringWithLength(3, strippedLineArray)) {
+      if (strippedLineArray.length > 1 && strippedLineArray.length < 12 && this.hasStringWithLength(3, strippedLineArray)) {
         strippedTextArray.push(strippedLineArray.join(' '));
       }
     });
