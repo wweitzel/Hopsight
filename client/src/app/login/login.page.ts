@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { CookieService } from 'ngx-cookie-service';
-
 import { environment } from 'src/environments/environment';
 import { MenuController } from '@ionic/angular';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -15,23 +14,15 @@ export class LoginPage implements OnInit {
 
   private redirectUrl = 'redirect_url';
 
-  constructor(private cookieService: CookieService,
-              private router: Router,
-              public menu: MenuController) { }
+  constructor(private router: Router,
+              public menu: MenuController,
+              private authService: AuthService) { }
 
   ngOnInit() {
     this.menu.enable(false);
-    if (localStorage.getItem('access_token_hopsight')) {
+    if (this.authService.isLoggedIn()) {
       this.router.navigate(['/home']);
     }
   }
 
-  login() {
-    window.open(
-      'https://untappd.com/oauth/authenticate/' +
-      '?client_id=' + environment.untappd_client_id +
-      '&response_type=code&' +
-      'redirect_url=' + this.redirectUrl,
-      '_self');
-  }
 }

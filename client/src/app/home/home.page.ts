@@ -11,6 +11,7 @@ import { OcrSpaceMockService } from '../services/ocr-space-mock.service';
 import { forkJoin } from 'rxjs';
 import { BeerDetectService } from '../services/beer-detect.service';
 import { Router, NavigationExtras, ActivatedRoute } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -34,15 +35,16 @@ export class HomePage {
     private beerDetectService: BeerDetectService,
     public menu: MenuController,
     public toastController: ToastController,
-    private route: ActivatedRoute) { }
+    private route: ActivatedRoute,
+    private authService: AuthService) { }
 
   ngOnInit() {
     const access_token = this.route.snapshot.queryParamMap.get("access_token")
     if (access_token) {
-      localStorage.setItem('access_token_hopsight', access_token);
+      this.authService.login(access_token);
       this.presentLoginToast(true);
     }
-    if (!localStorage.getItem('access_token_hopsight')) {
+    if (!this.authService.isLoggedIn()) {
       this.router.navigate(['/login']);
       return;
     }
