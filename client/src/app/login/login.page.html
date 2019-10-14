@@ -1,0 +1,20 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button [routerLink]="['/about']">About</ion-button>
+    </ion-buttons>
+    <ion-buttons slot="primary">
+      <ion-button (click)="login()">Login</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div style="width: 100vw; height: 80vh; display: flex; justify-content: center; align-items: center;">
+    <div style="text-align: center;">
+    <h1>HOPSIGHT</h1>
+    <p>Login to get started</p>
+    <ion-button (click)="login()">Login with Untappd</ion-button>
+    </div>
+  </div>
+</ion-content>

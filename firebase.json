@@ -1,6 +1,7 @@
 {
-  "hosting": {
-    "public": "www",
+  "hosting": [{
+    "target": "client",
+    "public": "client/www",
     "ignore": [
       "firebase.json",
       "**/.*",
@@ -32,5 +33,21 @@
         ]
       }
     ]
+  },
+  {
+    "target": "server",
+    "public": "server/public",
+    "rewrites": [{
+      "source": "/authenticate",
+      "function": "app"
+    }],
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }],
+  "functions": {
+    "source": "server/functions"
   }
 }

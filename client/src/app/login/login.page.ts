@@ -13,7 +13,7 @@ import { MenuController } from '@ionic/angular';
 })
 export class LoginPage implements OnInit {
 
-  private redirectUrl = 'http://localhost:3000/authenticate';
+  private redirectUrl = 'https://us-central1-hopsightbeer.cloudfunctions.net/app/authenticate';
 
   constructor(private cookieService: CookieService,
               private router: Router,
@@ -21,7 +21,7 @@ export class LoginPage implements OnInit {
 
   ngOnInit() {
     this.menu.enable(false);
-    if (this.cookieService.get('access_token')) {
+    if (localStorage.getItem('access_token_hopsight')) {
       this.router.navigate(['/home']);
     }
   }
