@@ -12,11 +12,9 @@ import { AuthService } from '../services/auth.service';
 })
 export class LoginPage implements OnInit {
 
-  private redirectUrl = 'redirect_url';
-
   constructor(private router: Router,
               public menu: MenuController,
-              private authService: AuthService) { }
+              public authService: AuthService) { }
 
   ngOnInit() {
     this.menu.enable(false);
