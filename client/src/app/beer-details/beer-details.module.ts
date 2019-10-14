@@ -5,7 +5,6 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
 import { BeerDetailsComponent } from './beer-details.component';
-import { AboutPage } from '../about/about.page';
 
 const routes: Routes = [
   {

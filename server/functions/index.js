@@ -13,7 +13,7 @@ app.get('/authenticate', async (req, res) => {
         "&code=" + req.query.code);
     const json = await response.json();
     const access_token = json.response.access_token;
-    res.redirect("https://hopsightbeer.firebaseapp.com/home?access_token=" + access_token);
+    res.redirect("https://hopsightbeer.firebaseapp.com/login?access_token=" + access_token);
 });
 
 exports.app = functions.https.onRequest(app);

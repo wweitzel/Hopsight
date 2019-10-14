@@ -6,6 +6,9 @@ import { HttpClientModule } from '@angular/common/http';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+
+import { IonicStorageModule } from '@ionic/storage';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -20,6 +23,7 @@ import { CookieService } from 'ngx-cookie-service';
     BrowserModule,
     HttpClientModule,
     IonicModule.forRoot(),
+    IonicStorageModule.forRoot(),
     AppRoutingModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
@@ -27,6 +31,7 @@ import { CookieService } from 'ngx-cookie-service';
     StatusBar,
     SplashScreen,
     CookieService,
+    InAppBrowser,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]
