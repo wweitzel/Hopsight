@@ -12,11 +12,9 @@ import { AuthService } from '../services/auth.service';
 })
 export class LoginPage implements OnInit {
 
-  private redirectUrl = 'https://us-central1-hopsightbeer.cloudfunctions.net/app/authenticate';
-
   constructor(private router: Router,
               public menu: MenuController,
-              private authService: AuthService) { }
+              public authService: AuthService) { }
 
   ngOnInit() {
     this.menu.enable(false);

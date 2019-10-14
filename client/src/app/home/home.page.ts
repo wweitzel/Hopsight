@@ -36,7 +36,7 @@ export class HomePage {
     public menu: MenuController,
     public toastController: ToastController,
     private route: ActivatedRoute,
-    private authService: AuthService) { }
+    public authService: AuthService) { }
 
   ngOnInit() {
     const access_token = this.route.snapshot.queryParamMap.get("access_token")
