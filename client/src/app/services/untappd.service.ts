@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 
 import { environment } from '../../environments/environment';
 import { Beer } from '../models/beer.model';
+import { AuthService } from './auth.service';
 
 export interface SearchResult {
   searchTerm: string,
@@ -20,13 +21,13 @@ export class UntappdService {
   private clientId = environment.untappd_client_id;
   private clientSecret = environment.untappd_client_secret;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,
+              private authService: AuthService) { }
 
   getBeerInfo(beerId: number): Observable<Beer> {
     const url = this.url + '/beer/info/' + beerId;
     let params = new HttpParams();
-    params = params.append('client_id', this.clientId);
-    params = params.append('client_secret', this.clientSecret);
+    params = params.append('access_token', this.authService.getAccessToken());
     return this.http.get<any>(url, { params }).pipe(map(beerInfo => {
       const beer: Beer = {
         beer_name: beerInfo.response.beer.beer_name,
@@ -47,8 +48,7 @@ export class UntappdService {
   getSearchResults(text: string): Observable<SearchResult> {
     const url = this.url + '/search/beer';
     let params = new HttpParams();
-    params = params.append('client_id', this.clientId);
-    params = params.append('client_secret', this.clientSecret);
+    params = params.append('access_token', this.authService.getAccessToken());
     params = params.append('q', text);
     return this.http.get(url, { params }).pipe(map((search: any) => {
       let beers: Beer[] = [];

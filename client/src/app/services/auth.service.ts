@@ -25,6 +25,10 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
+  getAccessToken() {
+    return localStorage.getItem(AuthService.ACCESS_TOKEN_KEY);
+  }
+
   loginWithUntappd() {
     window.open(
       'https://untappd.com/oauth/authenticate/' +
