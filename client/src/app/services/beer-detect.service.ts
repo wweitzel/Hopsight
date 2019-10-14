@@ -25,9 +25,13 @@ export class BeerDetectService {
           strippedLine = strippedLine + word + ' ';
         }
       });
+      strippedLine = strippedLine.trim();
       const strippedLineArray = strippedLine.split(/[ ]+/);
+      if (this.isNumber(strippedLineArray[strippedLineArray.length - 1])) {
+        strippedLineArray.pop();
+      }
       if (strippedLineArray.length > 2 && strippedLineArray.length < 12 && this.hasStringWithLength(3, strippedLineArray)) {
-        strippedTextArray.push(strippedLine);
+        strippedTextArray.push(strippedLineArray.join(' '));
       }
     });
     return strippedTextArray;
@@ -40,5 +44,9 @@ export class BeerDetectService {
       }
     }
     return false;
+  }
+
+  private isNumber(value: string | number): boolean {
+    return ((value != null) && !isNaN(Number(value.toString())));
   }
 }
