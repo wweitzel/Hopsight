@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 
 import { LoadingController, MenuController, ToastController } from '@ionic/angular';
 
@@ -36,7 +36,8 @@ export class HomePage {
     public menu: MenuController,
     public toastController: ToastController,
     public route: ActivatedRoute,
-    public authService: AuthService) { }
+    public authService: AuthService,
+    public changeDetector: ChangeDetectorRef) { }
 
   ionViewWillEnter() {
     this.menu.enable(true);
@@ -50,6 +51,7 @@ export class HomePage {
     await this.handleImage(event).finally(async () => {
       await this.dismissLoading();
       this.doneParsing = true;
+      this.changeDetector.detectChanges();
     });
   }
 
@@ -58,6 +60,7 @@ export class HomePage {
     await this.rankBeers(event.detail.value).finally(async () => {
       await this.dismissLoading();
       this.showGetStarted = false;
+      this.changeDetector.detectChanges();
     });
   }
 
