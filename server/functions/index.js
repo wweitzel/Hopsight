@@ -1,3 +1,4 @@
+const api_keys = require('./api_keys/keys');
 const functions = require('firebase-functions');
 const express = require('express');
 const fetch = require("node-fetch");
@@ -6,10 +7,10 @@ const app = express();
 
 app.get('/authenticate', async (req, res) => {
     const response = await fetch("https://untappd.com/oauth/authorize/" +
-        "?client_id=EF65DE994C929A1C4DAA6B75040BA76D2487DDFF" +
-        "&client_secret=64D3BDA4489097388BEB62C9815054316F0EF4CC" +
+        "?client_id=" + api_keys.UNTAPPD_CLIENT_ID +
+        "&client_secret=" + api_keys.UNTAPPED_CLIENT_SECRET +
         "&response_type=code" +
-        "&redirect_url=https://us-central1-hopsightbeer.cloudfunctions.net/app/authenticate" +
+        "&redirect_url=" + api_keys.REDIRECT_URL +
         "&code=" + req.query.code);
     const json = await response.json();
     const access_token = json.response.access_token;
