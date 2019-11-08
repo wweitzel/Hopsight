@@ -38,6 +38,8 @@ Run local server
 
 This will then start the app.
 
+**NOTE: When running locally, the app will currently try to authenticate with the live authentication service which will cause a redirect to the live site. For development you will need to work around this. One solution is to manually figure out your user access token and add it to `IndexedDB` storage for `localhost:4200` with key `"access_token_hopsight"`**
+
 ## Authentication
 
 The app uses OAuth2 with an Untappd account to authenticate. A live server to authenticate with is running that the app will connect to. The server code is provided in the `/server` folder in case you want to host your own.
