@@ -7,10 +7,10 @@ const app = express();
 
 app.get('/authenticate', async (req, res) => {
     const response = await fetch("https://untappd.com/oauth/authorize/" +
-        "?client_id=" + api_keys.UNTAPPD_CLIENT_ID +
-        "&client_secret=" + api_keys.UNTAPPED_CLIENT_SECRET +
+        "?client_id=" + api_keys.api_keys.UNTAPPD_CLIENT_ID +
+        "&client_secret=" + api_keys.api_keys.UNTAPPED_CLIENT_SECRET +
         "&response_type=code" +
-        "&redirect_url=" + api_keys.REDIRECT_URL +
+        "&redirect_url=" + api_keys.api_keys.REDIRECT_URL +
         "&code=" + req.query.code);
     const json = await response.json();
     const access_token = json.response.access_token;
