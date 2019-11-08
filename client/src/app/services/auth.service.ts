@@ -12,7 +12,7 @@ import { Platform, ToastController } from '@ionic/angular';
 export class AuthService {
 
   private static ACCESS_TOKEN_KEY = 'access_token_hopsight';
-  private redirectUrl = 'redirect_url';
+  private redirectUrl = 'https://us-central1-hopsightbeer.cloudfunctions.net/app/authenticate';
 
   constructor(private router: Router,
     private iab: InAppBrowser,
