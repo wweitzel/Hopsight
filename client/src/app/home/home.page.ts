@@ -22,6 +22,7 @@ export class HomePage {
 
   imageText = '';
   errorMessage = '';
+  autoRank = false;
   doneParsing = false;
   showGetStarted = true;
   strippedTextArray = [];
@@ -53,15 +54,26 @@ export class HomePage {
       this.doneParsing = true;
       this.changeDetector.detectChanges();
     });
+    if (this.autoRank) {
+      await this.beersSelected({detail: {value: this.strippedTextArray}});
+    }
   }
 
   async beersSelected(event) {
     await this.presentLoading('Ranking beers...');
-    await this.rankBeers(event.detail.value).finally(async () => {
-      await this.dismissLoading();
-      this.showGetStarted = false;
-      this.changeDetector.detectChanges();
-    });
+    
+    try {
+      await this.rankBeers(event.detail.value).finally(async () => {
+        await this.dismissLoading();
+        this.showGetStarted = false;
+        this.changeDetector.detectChanges();
+      });
+    } catch (e) {
+      if (e.error.meta.code === 429) {
+        this.errorMessage = 'Too many requests. Try again in one hour.'
+      }
+    }
+    
   }
 
   private async handleImage(event) {

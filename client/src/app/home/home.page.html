@@ -22,11 +22,18 @@
       <p>Click the camera button to take a picture of a beer menu.</p>
     </ion-card-content>
   </ion-card>
+  <div style="display: flex; align-items: center;">
+      <ion-toggle [(ngModel)]="autoRank" color="primary"></ion-toggle>
+      <span>Auto Rank</span>
+    </div>
+  <div class="option">
+    <div style="font-size: 12px;">Auto rank results have a greater chance of being incorrect</div>
+  </div>
   <div id="camera-button-container">
     <input style="display: none;" #inputcamera type="file" accept="image/*" (change)="imageSelected($event)" />
     <ion-button id="camera-button" (click)="inputcamera.click()">Camera</ion-button>
   </div>
-  <div *ngIf="doneParsing" id="beer-select">
+  <div *ngIf="doneParsing && !autoRank" id="beer-select">
     <div id="select-tip">Now select all beers from the possible beer list below</div>
     <ion-item>
       <ion-label>Possible Beers</ion-label>
