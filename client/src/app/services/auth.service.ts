@@ -37,32 +37,36 @@ export class AuthService {
     return this.storage.get(AuthService.ACCESS_TOKEN_KEY);
   }
 
-  loginWithUntappd() {
-    const url = 'https://untappd.com/oauth/authenticate/' +
-      '?client_id=' + environment.untappd_client_id +
-      '&response_type=code&' +
-      'redirect_url=' + this.redirectUrl;
+  async loginWithUntappd() {
+    await this.login('E49827D2B8E444B9F9D81493650308E8053436DE');
+    this.presentLoginToast(true);
+    this.router.navigate(['/home']);
 
-    if (this.platform.is('cordova')) {
-      const browser = this.iab.create(url, '_blank');
-      browser.on('loadstart').subscribe(async event => {
-        if ((event.url).indexOf('?access_token=') !== -1) {
-          browser.close();
-          let token = event.url.slice(event.url.indexOf('?access_token=') + '?access_token='.length);
-          // here is your token, now you can close the InAppBrowser
-          await this.login(token);
-          this.presentLoginToast(true);
-          this.router.navigate(['/home']);
-        }
-      });
-    } else {
-      window.open(
-        'https://untappd.com/oauth/authenticate/' +
-        '?client_id=' + environment.untappd_client_id +
-        '&response_type=code&' +
-        'redirect_url=' + this.redirectUrl,
-        '_self');
-    }
+    // const url = 'https://untappd.com/oauth/authenticate/' +
+    //   '?client_id=' + environment.untappd_client_id +
+    //   '&response_type=code&' +
+    //   'redirect_url=' + this.redirectUrl;
+
+    // if (this.platform.is('cordova')) {
+    //   const browser = this.iab.create(url, '_blank');
+    //   browser.on('loadstart').subscribe(async event => {
+    //     if ((event.url).indexOf('?access_token=') !== -1) {
+    //       browser.close();
+    //       let token = event.url.slice(event.url.indexOf('?access_token=') + '?access_token='.length);
+    //       // here is your token, now you can close the InAppBrowser
+    //       await this.login(token);
+    //       this.presentLoginToast(true);
+    //       this.router.navigate(['/home']);
+    //     }
+    //   });
+    // } else {
+    //   window.open(
+    //     'https://untappd.com/oauth/authenticate/' +
+    //     '?client_id=' + environment.untappd_client_id +
+    //     '&response_type=code&' +
+    //     'redirect_url=' + this.redirectUrl,
+    //     '_self');
+    // }
   }
 
   async presentLoginToast(success: boolean) {

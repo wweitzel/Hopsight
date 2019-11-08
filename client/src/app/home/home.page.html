@@ -13,6 +13,7 @@
 </ion-header>
 
 <ion-content>
+
   <ion-card *ngIf="showGetStarted" class="welcome-card">
     <ion-card-header>
       <ion-card-subtitle>Get Started</ion-card-subtitle>
@@ -22,13 +23,14 @@
       <p>Click the camera button to take a picture of a beer menu.</p>
     </ion-card-content>
   </ion-card>
-  <div style="display: flex; align-items: center;">
-      <ion-toggle [(ngModel)]="autoRank" color="primary"></ion-toggle>
-      <span>Auto Rank</span>
-    </div>
+
   <div class="option">
-    <div style="font-size: 12px;">Auto rank results have a greater chance of being incorrect</div>
+    <div style="display: flex; justify-content: center; align-items: center;">
+      <div style="margin-right: 10px;" [ngClass]="{'grayed-out': !autoRank}">Auto Rank*</div>
+      <ion-toggle [(ngModel)]="autoRank" color="primary"></ion-toggle>
+    </div>
   </div>
+
   <div id="camera-button-container">
     <input style="display: none;" #inputcamera type="file" accept="image/*" (change)="imageSelected($event)" />
     <ion-button id="camera-button" (click)="inputcamera.click()">Camera</ion-button>
@@ -63,4 +65,5 @@
   </div>
 
   <div id="error-message">{{ errorMessage }}</div>
+  <div class="option" style="font-size: 12px;">*Auto rank may produce strange results</div>
 </ion-content>

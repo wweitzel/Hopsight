@@ -10,10 +10,11 @@ table#beer-table tr:hover td {
 #camera-button-container {
   margin-left: 10px;
   margin-right: 10px;
+  text-align: center;
 }
 
 #camera-button {
-  width: 100%;
+  width: 80%;
 }
 
 #beer-select {
@@ -74,6 +75,10 @@ tr:nth-child(odd) td {
 
 .option {
   margin: 10px;
+}
+
+.grayed-out {
+  opacity: 0.6;
 }
 
 .row-name {
