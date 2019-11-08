@@ -10,11 +10,18 @@
 </ion-header>
 
 <ion-content>
-  <div style="width: 100vw; height: 80vh; display: flex; justify-content: center; align-items: center;">
+  <div style="width: 100vw; height: 70vh; display: flex; justify-content: center; align-items: center;">
     <div style="text-align: center;">
-    <h1>HOPSIGHT</h1>
-    <p>Login to get started</p>
-    <ion-button (click)="authService.loginWithUntappd()">Login with Untappd</ion-button>
+      <h1>HOPSIGHT</h1>
+      <div class="info-box">
+        <ion-icon name="camera"></ion-icon>
+        <span>Take a picture of a beer menu</span>
+      </div>
+      <div class="info-box">
+        <ion-icon name="list"></ion-icon>
+        <span>See beers ranked by Untappd user rating</span>
+      </div>
+      <ion-button class="login-button" (click)="authService.loginWithUntappd()">Login with Untappd</ion-button>
     </div>
   </div>
 </ion-content>
