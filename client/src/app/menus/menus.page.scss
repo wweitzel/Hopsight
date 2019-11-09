@@ -2,9 +2,11 @@
   margin: 20px;
 }
 
-table#beer-table tr:hover td {
-  background-color: #a3a3a3;
-  cursor: pointer;
+@media (hover: hover) {
+  table#beer-table tr:hover td  {
+    background-color: #a3a3a3;
+    cursor: pointer;
+  }
 }
 
 #beer-table-container {
