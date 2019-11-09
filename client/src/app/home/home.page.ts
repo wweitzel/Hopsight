@@ -26,6 +26,7 @@ export class HomePage {
   doneParsing = false;
   showGetStarted = true;
   strippedTextArray = [];
+  username: Promise<string>;
   selectedBeers: string[] = [];
   beersWithRanks: any[] = [];
   
@@ -42,6 +43,7 @@ export class HomePage {
 
   ionViewWillEnter() {
     this.menu.enable(true);
+    this.username = this.authService.getUsername();
   }
 
   async imageSelected(event) {

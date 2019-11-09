@@ -10,6 +10,7 @@ import { MenuController } from '@ionic/angular';
 export class AboutPage {
 
   isLoggedIn: boolean;
+  username: Promise<string>;
 
   constructor(public authService: AuthService,
               public menu: MenuController) { }
@@ -18,6 +19,7 @@ export class AboutPage {
     this.menu.enable(true);
     this.authService.isLoggedIn().then((resp) => {
       if (resp) {
+        this.username = this.authService.getUsername();
         this.isLoggedIn = true;
       } else {
         this.isLoggedIn = false;

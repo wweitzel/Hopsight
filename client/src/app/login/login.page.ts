@@ -27,8 +27,9 @@ export class LoginPage implements OnInit {
     });
     if (!this.platform.is('cordova')) {
       const access_token = this.route.snapshot.queryParamMap.get("access_token")
+      const username = this.route.snapshot.queryParamMap.get("username")
       if (access_token) {
-        this.authService.login(access_token).then(() => {
+        this.authService.login(access_token, username).then(() => {
           this.router.navigate(['/home']);
           this.authService.presentLoginToast(true);
         })

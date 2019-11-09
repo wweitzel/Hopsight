@@ -12,6 +12,7 @@ import { Platform, ToastController } from '@ionic/angular';
 export class AuthService {
 
   private static ACCESS_TOKEN_KEY = 'access_token_hopsight';
+  private static USERNAME_KEY = 'username';
   private redirectUrl = 'https://us-central1-hopsightbeer.cloudfunctions.net/app/authenticate';
 
   constructor(private router: Router,
@@ -24,17 +25,23 @@ export class AuthService {
     return this.storage.get(AuthService.ACCESS_TOKEN_KEY);
   }
 
-  login(token: string) {
-    return this.storage.set(AuthService.ACCESS_TOKEN_KEY, token);
+  async login(token: string, username: string) {
+    await this.storage.set(AuthService.USERNAME_KEY, username);
+    await this.storage.set(AuthService.ACCESS_TOKEN_KEY, token);
   }
 
   async logout() {
     await this.storage.remove(AuthService.ACCESS_TOKEN_KEY);
+    await this.storage.remove(AuthService.USERNAME_KEY);
     this.router.navigate(['/login']);
   }
 
   getAccessToken() {
     return this.storage.get(AuthService.ACCESS_TOKEN_KEY);
+  }
+
+  getUsername() {
+    return this.storage.get(AuthService.USERNAME_KEY);
   }
 
   async loginWithUntappd() {
@@ -48,9 +55,10 @@ export class AuthService {
       browser.on('loadstart').subscribe(async event => {
         if ((event.url).indexOf('?access_token=') !== -1) {
           browser.close();
-          let token = event.url.slice(event.url.indexOf('?access_token=') + '?access_token='.length);
-          // here is your token, now you can close the InAppBrowser
-          await this.login(token);
+          let indexOfUsername = event.url.indexOf('&username=');
+          let token = event.url.slice(event.url.indexOf('?access_token=') + '?access_token='.length, indexOfUsername);
+          let username = event.url.slice(event.url.indexOf('&username=') + '&username='.length);
+          await this.login(token, username);
           this.presentLoginToast(true);
           this.router.navigate(['/home']);
         }
