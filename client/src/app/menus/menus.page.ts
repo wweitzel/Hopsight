@@ -3,6 +3,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { map } from 'rxjs/operators';
+import { NavigationExtras, Router } from '@angular/router';
 
 export interface Menu {
   name?: string,
@@ -23,7 +24,8 @@ export class MenusPage implements OnInit {
   username: string;
 
   constructor(private db: AngularFirestore,
-    private authService: AuthService) { }
+              public authService: AuthService,
+              private router: Router) { }
 
   async ngOnInit() {
     this.selectedMenu = {
@@ -41,6 +43,15 @@ export class MenusPage implements OnInit {
 
   menuSelected(event) {
     this.selectedMenu = this.menus.find((menu) => menu.name === event.detail.value);
+  }
+
+  rowClicked(row) {
+    let navigationExtras: NavigationExtras = {
+      state: {
+        beer: row.beer_untappd
+      }
+    };
+    this.router.navigate(['beer-details'], navigationExtras);
   }
 
 }

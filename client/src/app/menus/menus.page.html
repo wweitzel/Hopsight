@@ -17,7 +17,7 @@
   <div class="container">
     <div>Select a menu to view previous results</div>
     <ion-item>
-      <ion-label>Previous menus</ion-label>
+      <ion-label>Saved menus</ion-label>
       <ion-select placeholder="Select menu" (ionChange)="menuSelected($event)">
         <ion-select-option *ngFor="let menu of menusObservable | async">{{ menu.name }}</ion-select-option>
       </ion-select>

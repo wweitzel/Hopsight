@@ -100,7 +100,7 @@ export class HomePage {
   rowClicked(row) {
     let navigationExtras: NavigationExtras = {
       state: {
-        beer: row.beer
+        beer: row.beer_untappd
       }
     };
     this.router.navigate(['beer-details'], navigationExtras);
