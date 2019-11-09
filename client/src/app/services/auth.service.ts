@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { Storage } from '@ionic/storage';
 import { Platform, ToastController } from '@ionic/angular';
+import { AngularFirestore } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,8 @@ export class AuthService {
     private iab: InAppBrowser,
     private platform: Platform,
     private storage: Storage,
-    private toastController: ToastController) { }
+    private toastController: ToastController,
+    private db: AngularFirestore) { }
 
   isLoggedIn() {
     return this.storage.get(AuthService.ACCESS_TOKEN_KEY);
@@ -58,6 +60,7 @@ export class AuthService {
           let indexOfUsername = event.url.indexOf('&username=');
           let token = event.url.slice(event.url.indexOf('?access_token=') + '?access_token='.length, indexOfUsername);
           let username = event.url.slice(event.url.indexOf('&username=') + '&username='.length);
+          await this.storeUser(username);
           await this.login(token, username);
           this.presentLoginToast(true);
           this.router.navigate(['/home']);
@@ -79,5 +82,15 @@ export class AuthService {
       duration: 2000
     });
     toast.present();
+  }
+
+  async storeUser(username: string) {
+    const dbUser = await this.db.collection('users', ref => ref.where('username', '==', username)).get().toPromise();
+    if (dbUser.empty) {
+      await this.db.collection('users').doc(username).set({
+        username: username
+      })
+    }
+    console.log(dbUser);
   }
 }
