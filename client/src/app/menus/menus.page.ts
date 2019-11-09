@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { AuthService } from '../services/auth.service';
-import { map } from 'rxjs/operators';
 import { NavigationExtras, Router } from '@angular/router';
 
 export interface Menu {
@@ -28,11 +27,7 @@ export class MenusPage implements OnInit {
               private router: Router) { }
 
   async ngOnInit() {
-    this.selectedMenu = {
-      name: '',
-      user: '',
-      beers: [],
-    }
+    this.selectedMenu = { name: '', user: '', beers: [] };
     this.username = await this.authService.getUsername();
     this.menusObservable = this.db.collection<Menu>('user_menu', ref => ref.where('user', '==', this.username)).valueChanges();
     this.menusObservable.subscribe({
