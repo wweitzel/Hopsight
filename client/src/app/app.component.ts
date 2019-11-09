@@ -18,6 +18,11 @@ export class AppComponent {
       icon: 'home'
     },
     {
+      title: 'Menus',
+      url: '/menus',
+      icon: 'menu'
+    },
+    {
       title: 'About',
       url: '/about',
       icon: 'help'

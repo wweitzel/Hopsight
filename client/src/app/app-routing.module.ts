@@ -15,7 +15,8 @@ const routes: Routes = [
   },
   { path: 'about', loadChildren: './about/about.module#AboutPageModule' },
   { path: 'beer-details', canActivate: [ AuthGuard ], loadChildren: './beer-details/beer-details.module#BeerDetailsModule' },
-  { path: 'login', loadChildren: './login/login.module#LoginPageModule' }
+  { path: 'login', loadChildren: './login/login.module#LoginPageModule' },
+  { path: 'menus', canActivate: [ AuthGuard ], loadChildren: './menus/menus.module#MenusPageModule' }
 ];
 
 @NgModule({

@@ -1,0 +1,44 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-buttons slot="primary">
+      <ion-button>{{ username }}</ion-button>
+      <ion-button (click)="authService.logout()">Logout</ion-button>
+    </ion-buttons>
+    <ion-title>
+      Your Menus
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="container">
+    <div>Select a menu to view previous results</div>
+    <ion-item>
+      <ion-label>Previous menus</ion-label>
+      <ion-select placeholder="Select menu" (ionChange)="menuSelected($event)">
+        <ion-select-option *ngFor="let menu of menusObservable | async">{{ menu.name }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <div id="beer-table-container">
+      <table id="beer-table">
+        <thead>
+          <tr>
+            <th class="row-1 row-name">Beer Name</th>
+            <th class="row-2 row-abv">ABV</th>
+            <th class="row-3 row-rating">Rating</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let beer of selectedMenu.beers" (click)="rowClicked(beer)">
+            <td>{{ beer.search_term }}</td>
+            <td>29</td>
+            <td>989</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</ion-content>

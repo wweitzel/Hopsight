@@ -12,7 +12,9 @@ export const environment = {
 
   untappd_client_id: api_keys.UNTAPPD_CLIENT_ID,
   untappd_client_secret: api_keys.UNTAPPED_CLIENT_SECRET,
-  ocr_space_api_key: api_keys.OCR_SPACE_API_KEY
+  ocr_space_api_key: api_keys.OCR_SPACE_API_KEY,
+
+  firebaseConfig: api_keys.firebaseConfig
 };
 
 /*
