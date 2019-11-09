@@ -57,9 +57,9 @@
       </thead>
       <tbody>
         <tr *ngFor="let beer of beersWithRanks" (click)="rowClicked(beer)">
-          <td>{{beer.searchTerm}}</td>
-          <td>{{beer.beer.beer_abv}}</td>
-          <td>{{beer.beer.rating_score}}</td>
+          <td>{{beer.search_term}}</td>
+          <td>{{beer.beer_untappd.beer_abv}}</td>
+          <td>{{beer.beer_untappd.rating_score}}</td>
         </tr>
       </tbody>
     </table>
@@ -68,3 +68,13 @@
   <div id="error-message">{{ errorMessage }}</div>
   <div class="option" style="font-size: 12px;">*Auto rank may produce strange results</div>
 </ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="primary" [disabled]="!doneRanking || !menuSaveName" class="option" (click)="saveMenu()">Save Menu</ion-button>
+      <ion-input type="text" placeholder="Enter name to save" [(ngModel)]="menuSaveName"
+        name="menuSaveName"></ion-input>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>

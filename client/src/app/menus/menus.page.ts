@@ -4,7 +4,7 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { map } from 'rxjs/operators';
 
-interface Menu {
+export interface Menu {
   name?: string,
   beers?: any[],
   user: string

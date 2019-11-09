@@ -34,8 +34,8 @@
         <tbody>
           <tr *ngFor="let beer of selectedMenu.beers" (click)="rowClicked(beer)">
             <td>{{ beer.search_term }}</td>
-            <td>29</td>
-            <td>989</td>
+            <td>{{ beer.beer_untappd.beer_abv }}</td>
+            <td>{{ beer.beer_untappd.rating_score }}</td>
           </tr>
         </tbody>
       </table>

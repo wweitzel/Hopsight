@@ -12,6 +12,8 @@ import { forkJoin } from 'rxjs';
 import { BeerDetectService } from '../services/beer-detect.service';
 import { Router, NavigationExtras, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { Menu } from '../menus/menus.page';
 
 @Component({
   selector: 'app-home',
@@ -22,14 +24,16 @@ export class HomePage {
 
   imageText = '';
   errorMessage = '';
+  menuSaveName = '';
   autoRank = false;
   doneParsing = false;
+  doneRanking = false;
   showGetStarted = true;
   strippedTextArray = [];
   username: Promise<string>;
   selectedBeers: string[] = [];
   beersWithRanks: any[] = [];
-  
+
   constructor(public loadingController: LoadingController,
     public untappdService: UntappdService,
     public ocrSpaceService: OcrSpaceService,
@@ -39,7 +43,8 @@ export class HomePage {
     public toastController: ToastController,
     public route: ActivatedRoute,
     public authService: AuthService,
-    public changeDetector: ChangeDetectorRef) { }
+    public changeDetector: ChangeDetectorRef,
+    public db: AngularFirestore) { }
 
   ionViewWillEnter() {
     this.menu.enable(true);
@@ -49,6 +54,7 @@ export class HomePage {
   async imageSelected(event) {
     await this.presentLoading('Parsing image...');
     this.doneParsing = false;
+    this.doneRanking = false;
     this.beersWithRanks = [];
     this.errorMessage = '';
     await this.handleImage(event).finally(async () => {
@@ -57,13 +63,13 @@ export class HomePage {
       this.changeDetector.detectChanges();
     });
     if (this.autoRank) {
-      await this.beersSelected({detail: {value: this.strippedTextArray}});
+      await this.beersSelected({ detail: { value: this.strippedTextArray } });
     }
   }
 
   async beersSelected(event) {
     await this.presentLoading('Ranking beers...');
-    
+
     try {
       await this.rankBeers(event.detail.value).finally(async () => {
         await this.dismissLoading();
@@ -71,17 +77,18 @@ export class HomePage {
         this.changeDetector.detectChanges();
       });
     } catch (e) {
+      console.log(e);
       if (e.error.meta.code === 429) {
         this.errorMessage = 'Too many requests. Try again in one hour.'
       }
     }
-    
+
   }
 
   private async handleImage(event) {
     this.selectedBeers = [];
     const file = event.target.files[0];
-    
+
     const compressedImage = await this.compressImage(file);
     const base64 = await this.toBase64(compressedImage);
     const ocrResp = await this.ocrSpaceService.getParsedText(base64).toPromise();
@@ -99,9 +106,40 @@ export class HomePage {
     this.router.navigate(['beer-details'], navigationExtras);
   }
 
+  async saveMenu() {
+    if (!this.menuSaveName.trim()) {
+      this.errorMessage = 'Name cannot be blank';
+      return;
+    }
+
+    let menu: Menu = {
+      user: await this.authService.getUsername(),
+      beers: this.beersWithRanks,
+      name: this.menuSaveName
+    }
+    await this.presentLoading('Saving menu...')
+    const dbMenu = await this.db.collection<Menu>('user_menu', ref => ref.where('name', '==', this.menuSaveName)).get().toPromise();
+    if (!dbMenu.empty) {
+      this.errorMessage = 'Name already exists. Type a different name';
+      await this.dismissLoading();
+      return;
+    }
+    
+    this.db.collection<Menu>('user_menu').add(menu)
+      .then(() => {
+        this.errorMessage = 'Save menu successful'
+      })
+      .catch(() => {
+        this.errorMessage = 'Error saving menu'
+      })
+      .finally(async () => {
+        await this.dismissLoading()
+      });
+  }
+
   private async rankBeers(beers: string[]) {
     let promises: Promise<SearchResult>[] = [];
-    
+
     // Pepare individual search requests for each beer name
     for (const beer of beers) {
       promises.push(this.untappdService.getSearchResults(beer));
@@ -114,13 +152,13 @@ export class HomePage {
     let beersToRank: any[] = [];
     for (let search of data) {
       if (search.searchResult.length > 0) {
-        beersToRank.push({searchTerm: search.searchTerm, beer: search.searchResult[0]});
+        beersToRank.push({ search_term: search.searchTerm, beer_untappd: search.searchResult[0] });
       } else {
         const stripped = this.stripAfterDash(search.searchTerm);
         if (stripped) {
           const result = await this.untappdService.getSearchResults(stripped);
           if (result.searchResult.length > 0) {
-            beersToRank.push({searchTerm: result.searchTerm, beer: result.searchResult[0]});
+            beersToRank.push({ search_term: result.searchTerm, beer_untappd: result.searchResult[0] });
           } else {
             this.errorMessage = 'Not all beers could be ranked.'
           }
@@ -134,17 +172,18 @@ export class HomePage {
     for (const beer of beersToRank) {
       // Call get getBeerInfo for each beer so in order to get the rating score
       // This is because rating_score not included with beer from search request
-      const beerInfo = await this.untappdService.getBeerInfo(beer.beer.bid);
+      const beerInfo = await this.untappdService.getBeerInfo(beer.beer_untappd.bid);
       if (beerInfo) {
-        beersWithRanks.push({searchTerm: beer.searchTerm, beer: beerInfo});
+        beersWithRanks.push({ search_term: beer.search_term, beer_untappd: beerInfo });
       }
     }
 
     beersWithRanks.sort(function (a, b) {
-      return b.beer.rating_score - a.beer.rating_score;
+      return b.beer_untappd.rating_score - a.beer_untappd.rating_score;
     });
 
     this.beersWithRanks = beersWithRanks;
+    this.doneRanking = true;
   }
 
   private stripAfterDash(text: string): string {
