@@ -6,9 +6,7 @@
 }
 
 #camera-button-container {
-  margin-left: 10px;
-  margin-right: 10px;
-  text-align: center;
+  width: 150px;
 }
 
 #camera-button {
@@ -41,6 +39,12 @@
 
 #error-message {
   margin: 10px;
+}
+
+#button-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 table {

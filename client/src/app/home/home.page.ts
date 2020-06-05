@@ -25,7 +25,7 @@ export class HomePage {
   imageText = '';
   errorMessage = '';
   menuSaveName = '';
-  autoRank = false;
+  autoRank = true;
   doneParsing = false;
   doneRanking = false;
   showGetStarted = true;

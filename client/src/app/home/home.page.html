@@ -25,17 +25,6 @@
     </ion-card-content>
   </ion-card>
 
-  <div class="option">
-    <div style="display: flex; justify-content: center; align-items: center;">
-      <div style="margin-right: 10px;" [ngClass]="{'grayed-out': !autoRank}">Auto Rank*</div>
-      <ion-toggle [(ngModel)]="autoRank" color="primary"></ion-toggle>
-    </div>
-  </div>
-
-  <div id="camera-button-container">
-    <input style="display: none;" #inputcamera type="file" accept="image/*" (change)="imageSelected($event)" />
-    <ion-button id="camera-button" (click)="inputcamera.click()">Camera</ion-button>
-  </div>
   <div *ngIf="doneParsing && !autoRank" id="beer-select">
     <div id="select-tip">Now select all beers from the possible beer list below</div>
     <ion-item>
@@ -65,8 +54,21 @@
     </table>
   </div>
 
+  <div id="button-bar">
+    <div class="option">
+      <div style="display: flex; justify-content: center; align-items: center;">
+        <div style="margin-right: 10px;" [ngClass]="{'grayed-out': !autoRank}">Auto Rank</div>
+        <ion-toggle [(ngModel)]="autoRank" color="primary"></ion-toggle>
+      </div>
+    </div>
+
+    <div id="camera-button-container">
+      <input style="display: none;" #inputcamera type="file" accept="image/*" (change)="imageSelected($event)" />
+      <ion-button id="camera-button" (click)="inputcamera.click()">Camera</ion-button>
+    </div>
+  </div>
+
   <div id="error-message">{{ errorMessage }}</div>
-  <div class="option" style="font-size: 12px;">*Auto rank may produce strange results</div>
 </ion-content>
 
 <ion-footer>
