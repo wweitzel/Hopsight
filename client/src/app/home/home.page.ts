@@ -1,6 +1,6 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 
-import { LoadingController, MenuController, ToastController } from '@ionic/angular';
+import { LoadingController, MenuController, ToastController, AlertController } from '@ionic/angular';
 
 import imageCompression from 'lib/browser-image-compression/browser-image-compression';
 import { UntappdService, SearchResult } from '../services/untappd.service';
@@ -24,7 +24,6 @@ export class HomePage {
 
   imageText = '';
   errorMessage = '';
-  menuSaveName = '';
   autoRank = true;
   doneParsing = false;
   doneRanking = false;
@@ -44,7 +43,8 @@ export class HomePage {
     public route: ActivatedRoute,
     public authService: AuthService,
     public changeDetector: ChangeDetectorRef,
-    public db: AngularFirestore) { }
+    public db: AngularFirestore,
+    public alertController: AlertController) { }
 
   ionViewWillEnter() {
     this.menu.enable(true);
@@ -62,6 +62,7 @@ export class HomePage {
       this.doneParsing = true;
       this.changeDetector.detectChanges();
     });
+
     if (this.autoRank) {
       await this.beersSelected({ detail: { value: this.strippedTextArray } });
     }
@@ -106,8 +107,8 @@ export class HomePage {
     this.router.navigate(['beer-details'], navigationExtras);
   }
 
-  async saveMenu() {
-    if (!this.menuSaveName.trim()) {
+  async saveMenu(menuName: string) {
+  if (!menuName.trim()) {
       this.errorMessage = 'Name cannot be blank';
       return;
     }
@@ -115,10 +116,10 @@ export class HomePage {
     let menu: Menu = {
       user: await this.authService.getUsername(),
       beers: this.beersWithRanks,
-      name: this.menuSaveName
+      name: menuName
     }
     await this.presentLoading('Saving menu...')
-    const dbMenu = await this.db.collection<Menu>('user_menu', ref => ref.where('name', '==', this.menuSaveName)).get().toPromise();
+    const dbMenu = await this.db.collection<Menu>('user_menu', ref => ref.where('name', '==', menuName)).get().toPromise();
     if (!dbMenu.empty) {
       this.errorMessage = 'Name already exists. Type a different name';
       await this.dismissLoading();
@@ -135,6 +136,35 @@ export class HomePage {
       .finally(async () => {
         await this.dismissLoading()
       });
+  }
+
+  async presentAlertPrompt() {
+    const alert = await this.alertController.create({
+      header: 'Enter name for menu',
+      inputs: [
+        {
+          name: 'name',
+          type: 'text',
+          placeholder: 'Menu Name'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+          }
+        }, {
+          text: 'Save',
+          handler: (data) => {
+            this.saveMenu(data.name);
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 
   private async rankBeers(beers: string[]) {

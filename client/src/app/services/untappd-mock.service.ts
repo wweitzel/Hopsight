@@ -11,7 +11,7 @@ export class UntappdMockService {
 
   constructor() { }
 
-  getBeerInfo(beerId: number): Observable<Beer> {
+  getBeerInfo(beerId: number): Promise<Beer> {
     return of({
         "meta": {
             "code": 200,
@@ -3128,11 +3128,11 @@ export class UntappdMockService {
             beer_label: beerInfo.response.beer.beer_label
           };
           return beer;
-    }));
+    })).toPromise();
 
   }
 
-  getSearchResults(text: string): Observable<SearchResult> {
+  getSearchResults(text: string): Promise<SearchResult> {
       return of({
         "meta": {
             "code": 200,
@@ -4215,6 +4215,6 @@ export class UntappdMockService {
           beers.push(beer);
         })
         return {searchTerm: text, searchResult: beers};
-      }));
+      })).toPromise();
   }
 }

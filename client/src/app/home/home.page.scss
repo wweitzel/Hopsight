@@ -5,12 +5,8 @@
   }
 }
 
-#camera-button-container {
-  width: 150px;
-}
-
 #camera-button {
-  width: 80%;
+  width: 150px;
 }
 
 #beer-select {
@@ -43,7 +39,7 @@
 
 #button-bar {
   display: flex;
-  justify-content: center;
+  justify-content: space-evenly;
   align-items: center;
 }
 

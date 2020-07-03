@@ -55,28 +55,18 @@
   </div>
 
   <div id="button-bar">
-    <div class="option">
+    <!-- <div class="option">
       <div style="display: flex; justify-content: center; align-items: center;">
         <div style="margin-right: 10px;" [ngClass]="{'grayed-out': !autoRank}">Auto Rank</div>
         <ion-toggle [(ngModel)]="autoRank" color="primary"></ion-toggle>
       </div>
-    </div>
+    </div> -->
 
-    <div id="camera-button-container">
-      <input style="display: none;" #inputcamera type="file" accept="image/*" (change)="imageSelected($event)" />
-      <ion-button id="camera-button" (click)="inputcamera.click()">Camera</ion-button>
-    </div>
+    <input style="display: none;" #inputcamera type="file" accept="image/*" (change)="imageSelected($event)" />
+    <ion-button id="camera-button" (click)="inputcamera.click()">Camera</ion-button>
+
+    <ion-button *ngIf="doneRanking" id="camera-button" (click)="presentAlertPrompt()">Save Menu</ion-button>
   </div>
 
   <div id="error-message">{{ errorMessage }}</div>
 </ion-content>
-
-<ion-footer>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button color="primary" [disabled]="!doneRanking || !menuSaveName" class="option" (click)="saveMenu()">Save Menu</ion-button>
-      <ion-input type="text" placeholder="Enter name to save" [(ngModel)]="menuSaveName"
-        name="menuSaveName"></ion-input>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-footer>
